@@ -1,0 +1,114 @@
+heat_template_version: 2015-10-15
+
+parameter_groups:
+
+parameters:
+
+  key:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+
+  image:
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+
+  flavor:
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+
+  public_network:
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+
+  dns_nameservers:
+    type: comma_delimited_list
+    description: List of DNS servers
+    default:
+      - 8.8.8.8
+
+  name:
+    type: string
+    default: prometheus
+
+resources:
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      name: { get_param: name }
+      external_gateway_info:
+        network: { get_param: public_network }
+
+  simple_networking1:
+    type: Evoila::IaaS::NetworkLayout::Simple
+    properties:
+      name: { get_param: name }
+      network_cidr: 192.168.0.0/24
+      router: { get_resource: router }
+      dns_nameservers: { get_param: dns_nameservers }
+
+  security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: { get_param: name }
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+
+  cluster:
+    type: Evoila::IaaS::Cluster::Basic
+    properties:
+      count: 1
+      signals: 1 
+      name: { get_param: name }
+      key: { get_param: key }
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      security_groups:
+        - { get_resource: security_group }
+      subnets:
+        - { get_attr: [simple_networking1, subnet] }
+      timeout: 500
+      extras:
+        volume_count: 0
+        volume_size: 0
+
+  prometheus:
+    type: Evoila::Deployment::Prometheus
+    properties:
+      server_map: { get_attr: [ cluster, attributes_id ] }
+
+  node_exporter:
+    type: Evoila::Deployment::Node::Exporter
+    properties:
+      server_map: { get_attr: [ cluster, attributes_id ] }
+
+  nodeexporter_targets:
+    type: Evoila::Deployment::Prometheus::Targets
+    properties:
+      server_map: { get_attr: [ cluster, attributes_id ] }
+      server_addresses: { get_attr: [ cluster, first_addresses ] }
+      servers: { get_attr: [ cluster, first_addresses ] }
+      names: { get_attr: [ cluster, names ] }
+      job_name: monitor-nodes
+      port: 9100
+    depends_on:
+      - prometheus
+      - node_exporter
+
+  mysqldexporter_targets:
+    type: Evoila::Deployment::Prometheus::Targets
+    properties:
+      server_map: { get_attr: [ cluster, attributes_id ] }
+      server_addresses: { get_attr: [ cluster, first_addresses ] }
+      servers: { get_attr: [ cluster, first_addresses ] }
+      names: { get_attr: [ cluster, names ] }
+      job_name: monitor-mysqld
+      port: 9104
+    depends_on:
+      - prometheus
+
+outputs:

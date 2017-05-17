@@ -1,0 +1,5 @@
+resource_registry:
+  "Evoila::Deployment::Prometheus": src/deploy-prometheus-ubuntu.yaml
+  "Evoila::Deployment::Prometheus::Targets": src/deploy-prometheus-targets-ubuntu.yaml
+  "Evoila::Deployment::Prometheus::NodeExporter": src/deploy-node-exporter-ubuntu.yaml
+  "Evoila::Deployment::Prometheus::MysqldExporter": src/deploy-mysqld-exporter-ubuntu.yaml
