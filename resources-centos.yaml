@@ -1,0 +1,5 @@
+resource_registry:
+  "Evoila::Deployment::Prometheus": src/deploy-prometheus-centos.yaml
+  "Evoila::Deployment::Prometheus::Targets": src/deploy-prometheus-targets-centos.yaml
+  "Evoila::Deployment::Prometheus::NodeExporter": src/deploy-node-exporter-centos.yaml
+  "Evoila::Deployment::Prometheus::MysqldExporter": src/deploy-mysqld-exporter-centos.yaml

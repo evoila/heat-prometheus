@@ -1,0 +1,83 @@
+heat_template_version: 2015-04-30
+description: Installs Prometheus Targets
+
+parameters:
+
+  server_map:
+    type: json
+    description: Map of servers to be used with OS::Heat::SoftwareDeploymentGroup
+
+  server_addresses:
+    type: comma_delimited_list
+    description: List of server addresses
+
+  http_proxy:
+    type: string
+    description: "HTTP proxy URL"
+    default: ''
+
+  https_proxy:
+    type: string
+    description: "HTTPS proxy URL"
+    default: ''
+
+  no_proxy:
+    type: string
+    description: "Exceptions to proxy configuration"
+    default: ''
+
+  job_name:
+    type: string
+
+  servers:
+    type: comma_delimited_list
+
+  names:
+    type: comma_delimited_list
+
+  port:
+    type: number
+    constraints:
+      - range: { min: 9100 }
+
+resources:
+
+  # SOFTWARE CONFIGS
+
+  install:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: { get_file: scripts/centos/3_install-targets.sh }
+      inputs:
+        - name: JOB_NAME
+        - name: ADDRESSES
+          type: CommaDelimitedList
+        - name: NAMES
+          type: CommaDelimitedList
+
+  # SOFTWARE DEPLOYMENTS
+
+  deploy_install:
+    type: OS::Heat::SoftwareDeploymentGroup
+    properties:
+      config: { get_resource: install }
+      servers: { get_param: server_map }
+      signal_transport: HEAT_SIGNAL
+      input_values:
+        http_proxy: { get_param: http_proxy }
+        https_proxy: { get_param: https_proxy }
+        no_proxy: { get_param: no_proxy }
+        JOB_NAME: { get_param: job_name }
+        ADDRESSES:
+          repeat:
+            for_each:
+              <%server%>: { get_param: server_addresses }
+            template:
+              str_replace:
+                template: <%server%>:port
+                params:
+                   port: { get_param: port }
+        NAMES: { get_param: names }
+
+outputs:

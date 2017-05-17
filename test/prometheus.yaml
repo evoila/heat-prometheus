@@ -82,7 +82,7 @@ resources:
       server_map: { get_attr: [ cluster, attributes_id ] }
 
   node_exporter:
-    type: Evoila::Deployment::Node::Exporter
+    type: Evoila::Deployment::Prometheus::NodeExporter
     properties:
       server_map: { get_attr: [ cluster, attributes_id ] }
 
