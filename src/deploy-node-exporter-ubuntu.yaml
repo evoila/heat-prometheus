@@ -22,6 +22,10 @@ parameters:
     description: "Exceptions to proxy configuration"
     default: ''
 
+  download_url:
+    type: string
+    default: "https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz"
+
 resources:
 
   # SOFTWARE CONFIGS
@@ -32,7 +36,7 @@ resources:
       group: script
       config: { get_file: scripts/ubuntu/node_exporter/1_install.sh }
       inputs:
-        - name: VERSION
+        - name: DOWNLOAD_URL
 
   # SOFTWARE DEPLOYMENTS
 
@@ -46,6 +50,6 @@ resources:
         http_proxy: { get_param: http_proxy }
         https_proxy: { get_param: https_proxy }
         no_proxy: { get_param: no_proxy }
-        VERSION: 0.14.0
+        DOWNLOAD_URL: { get_param: download_url }
 
 outputs:

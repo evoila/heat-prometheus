@@ -80,11 +80,22 @@ resources:
     type: Evoila::Deployment::Prometheus
     properties:
       server_map: { get_attr: [ cluster, attributes_id ] }
+      download_url: "https://github.com/prometheus/prometheus/releases/download/v1.7.1/prometheus-1.7.1.linux-amd64.tar.gz"
 
   node_exporter:
     type: Evoila::Deployment::Prometheus::NodeExporter
     properties:
       server_map: { get_attr: [ cluster, attributes_id ] }
+      download_url: "https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz"
+
+  mysqld_exporter:
+    type: Evoila::Deployment::Prometheus::MysqldExporter
+    properties:
+      server_map: { get_attr: [ cluster, attributes_id ] }
+      download_url: "https://github.com/prometheus/mysqld_exporter/releases/download/v0.10.0/mysqld_exporter-0.10.0.linux-amd64.tar.gz"
+      mysql_host: 127.0.0.1
+      mysql_user: root
+      mysql_pass: none
 
   nodeexporter_targets:
     type: Evoila::Deployment::Prometheus::Targets
@@ -110,5 +121,6 @@ resources:
       port: 9104
     depends_on:
       - prometheus
+      - mysqld_exporter
 
 outputs:

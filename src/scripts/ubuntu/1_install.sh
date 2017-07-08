@@ -1,21 +1,22 @@
 #!/bin/bash
 
 # Expected parameters
-VERSION=${VERSION:-1.6.1}
+DOWNLOAD_URL=${DOWNLOAD_URL}
 
 mkdir -p /etc/prometheus
 mkdir -p /etc/prometheus/tgroups
 mkdir -p /usr/share/prometheus
 
 # Install prometheus
-curl -Lo /tmp/prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v1.6.1/prometheus-${VERSION}.linux-amd64.tar.gz
+curl -Lo /tmp/prometheus.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/prometheus.tar.gz -C /tmp/
 
-cp /tmp/prometheus-1.6.1.linux-amd64/prometheus /bin/prometheus
-cp /tmp/prometheus-1.6.1.linux-amd64/promtool /bin/promtool
-cp /tmp/prometheus-1.6.1.linux-amd64/prometheus.yml /etc/prometheus/prometheus.yml
-cp -r /tmp/prometheus-1.6.1.linux-amd64/console_libraries /usr/share/prometheus
-cp -r /tmp/prometheus-1.6.1.linux-amd64/consoles /usr/share/prometheus
+FOLDER_NAME=$(find /tmp -type d -name "prometheus*")
+cp $FOLDER_NAME/prometheus /bin/prometheus
+cp $FOLDER_NAME/promtool /bin/promtool
+cp $FOLDER_NAME/prometheus.yml /etc/prometheus/prometheus.yml
+cp -r $FOLDER_NAME/console_libraries /usr/share/prometheus
+cp -r $FOLDER_NAME/consoles /usr/share/prometheus
 
 cat <<EOF > /etc/systemd/system/prometheus.service
 [Unit]

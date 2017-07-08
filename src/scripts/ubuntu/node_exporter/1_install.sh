@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Expected parameters
-VERSION=${VERSION:-0.14.0}
+DOWNLOAD_URL=${DOWNLOAD_URL}
 
 # Install prometheus
-curl -Lo /tmp/node_exporter.tar.gz https://github.com/prometheus/node_exporter/releases/download/v$VERSION/node_exporter-$VERSION.linux-amd64.tar.gz
+curl -Lo /tmp/node_exporter.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/node_exporter.tar.gz -C /tmp/
 
-cp /tmp/node_exporter-$VERSION.linux-amd64/node_exporter /bin/node_exporter
+FOLDER_NAME=$(find /tmp -type d -name "node_exporter*")
+cp $FOLDER_NAME/node_exporter /bin/node_exporter
 
 cat <<EOF > /etc/systemd/system/node_exporter.service
 [Unit]

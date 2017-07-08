@@ -22,6 +22,10 @@ parameters:
     description: "Exceptions to proxy configuration"
     default: ''
 
+  download_url:
+    type: string
+    default: "https://github.com/prometheus/prometheus/releases/download/v1.6.1/prometheus-1.6.1.linux-amd64.tar.gz"
+
 resources:
 
   # SOFTWARE CONFIGS
@@ -32,7 +36,7 @@ resources:
       group: script
       config: { get_file: scripts/centos/1_install.sh }
       inputs:
-        - name: VERSION
+        - name: DOWNLOAD_URL
 
   configure:
     type: OS::Heat::SoftwareConfig
@@ -52,7 +56,7 @@ resources:
         http_proxy: { get_param: http_proxy }
         https_proxy: { get_param: https_proxy }
         no_proxy: { get_param: no_proxy }
-        VERSION: 1.6.1
+        DOWNLOAD_URL: { get_param: download_url }
 
   deploy_configure:
     type: OS::Heat::SoftwareDeploymentGroup
