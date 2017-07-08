@@ -81,6 +81,14 @@ resources:
     properties:
       server_map: { get_attr: [ cluster, attributes_id ] }
       download_url: "https://github.com/prometheus/prometheus/releases/download/v1.7.1/prometheus-1.7.1.linux-amd64.tar.gz"
+      config_template: { get_file: resources/prometheus.yml }
+      template_vars:
+        OS_REGION: region00
+        OS_AUTH_URL: http://mycloud.local:5000/v3
+        OS_USERNAME: testuser
+        OS_PASSWORD: testpass
+        OS_DOMAIN_NAME: default
+        OS_PROJECT_NAME: testproject
 
   node_exporter:
     type: Evoila::Deployment::Prometheus::NodeExporter
