@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Expected parameters
-VERSION=${VERSION:-1.6.1}
+DOWNLOAD_URL=${DOWNLOAD_URL}
 
 mkdir -p /etc/prometheus
 mkdir -p /etc/prometheus/tgroups
 mkdir -p /usr/share/prometheus
 
 # Install prometheus
-curl -Lo /tmp/prometheus.tar.gz https://github.com/prometheus/prometheus/releases/download/v1.6.1/prometheus-${VERSION}.linux-amd64.tar.gz
+curl -Lo /tmp/prometheus.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/prometheus.tar.gz -C /tmp/
 
 cp /tmp/prometheus-1.6.1.linux-amd64/prometheus /bin/prometheus

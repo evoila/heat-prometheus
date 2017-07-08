@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # Expected parameters
-VERSION=${VERSION:-0.10.0}
+DOWNLOAD_URL=${DOWNLOAD_URL}
 
 mkdir -p /etc/prometheus
 
 # Install prometheus
-curl -Lo /tmp/mysqld_exporter.tar.gz https://github.com/prometheus/mysqld_exporter/releases/download/v$VERSION/mysqld_exporter-$VERSION.linux-amd64.tar.gz
+curl -Lo /tmp/mysqld_exporter.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/mysqld_exporter.tar.gz -C /tmp/
 
-cp /tmp/mysqld_exporter-$VERSION.linux-amd64/mysqld_exporter /bin/mysqld_exporter
+FOLDER_NAME=$(find /tmp -type d -name "mysqld_exporter*")
+cp $FOLDER_NAME/mysqld_exporter /bin/mysqld_exporter
 
 cat <<EOF > /etc/systemd/system/mysqld_exporter.service
 [Unit]
@@ -27,3 +28,4 @@ EOF
 
 systemctl daemon-reload
 systemctl enable mysqld_exporter
+systemctl start mysqld_exporter
