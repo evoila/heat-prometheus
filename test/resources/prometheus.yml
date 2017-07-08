@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ["$PRIMARY_ADDR:9090"]
+  - job_name: 'dummy'
+    file_sd_configs:
+      - files: ['/etc/prometheus/tgroups/*.yaml']
+  - job_name: 'openstack-nodes'
+    openstack_sd_configs:
+      - region: $OS_REGION
+        identity_endpoint: $OS_AUTH_URL
+        username: $OS_USERNAME
+        password: $OS_PASSWORD
+        domain_name: $OS_DOMAIN_NAME
+        project_name: $OS_PROJECT_NAME
+        port: 9100
