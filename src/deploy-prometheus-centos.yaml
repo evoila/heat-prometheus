@@ -26,6 +26,12 @@ parameters:
     type: string
     default: "https://github.com/prometheus/prometheus/releases/download/v1.6.1/prometheus-1.6.1.linux-amd64.tar.gz"
 
+  config_template:
+    type: string
+
+  template_vars:
+    type: json
+
 resources:
 
   # SOFTWARE CONFIGS
@@ -43,6 +49,10 @@ resources:
     properties:
       group: script
       config: { get_file: scripts/centos/2_configure.sh }
+      inputs:
+        - name: CONFIG_TEMPLATE
+        - name: TEMPLATE_VARS
+          type: Json
 
   # SOFTWARE DEPLOYMENTS
 
@@ -68,6 +78,8 @@ resources:
         http_proxy: { get_param: http_proxy }
         https_proxy: { get_param: https_proxy }
         no_proxy: { get_param: no_proxy }
+        CONFIG_TEMPLATE: { get_param: config_template }
+        TEMPLATE_VARS: { get_param: template_vars }
     depends_on:
       - deploy_install
 
