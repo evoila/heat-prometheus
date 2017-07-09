@@ -11,7 +11,11 @@ for KEY in `echo $TEMPLATE_VARS | jq -r '. as $in| keys[]'`; do
   export $KEY=$VAL
 done
 
+
 CONFIG=$(eval "echo -e \"$CONFIG_TEMPLATE\"")
 echo "$CONFIG" > /etc/prometheus/prometheus.yml
+
+chown root:root /etc/prometheus/prometheus.yml
+chmod 600 /etc/prometheus/prometheus.yml
 
 service prometheus restart
