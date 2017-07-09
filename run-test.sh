@@ -7,7 +7,7 @@ IMAGE=$4
 FLAVOR=$5
 PUBLIC_NETWORK=$6
 
-openstack stack update -t test/$TEST.yaml\
+openstack stack create -t test/$TEST.yaml\
  -e test/lib/heat-iaas/resources.yaml\
  -e test/lib/heat-common/resources-$DISTRIBUTION.yaml\
  -e resources-$DISTRIBUTION.yaml\

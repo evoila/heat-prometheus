@@ -7,6 +7,12 @@ mkdir -p /etc/prometheus
 mkdir -p /etc/prometheus/tgroups
 mkdir -p /usr/share/prometheus
 
+# Cleanup and stop service if running
+rm -fR /tmp/prometheus*
+if [ $(pidof prometheus) ]; then
+  systemctl stop prometheus
+fi
+
 # Install prometheus
 curl -Lo /tmp/prometheus.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/prometheus.tar.gz -C /tmp/
@@ -14,9 +20,13 @@ tar -xvzf /tmp/prometheus.tar.gz -C /tmp/
 FOLDER_NAME=$(find /tmp -type d -name "prometheus*")
 cp $FOLDER_NAME/prometheus /bin/prometheus
 cp $FOLDER_NAME/promtool /bin/promtool
-cp $FOLDER_NAME/prometheus.yml /etc/prometheus/prometheus.yml
 cp -r $FOLDER_NAME/console_libraries /usr/share/prometheus
 cp -r $FOLDER_NAME/consoles /usr/share/prometheus
+
+# Only copy default config file of none exists
+if [ ! -f /etc/prometheus/prometheus.yml ]; then
+  cp $FOLDER_NAME/prometheus.yml /etc/prometheus/prometheus.yml
+fi
 
 cat <<EOF > /etc/systemd/system/prometheus.service
 [Unit]
@@ -40,3 +50,4 @@ EOF
 
 systemctl daemon-reload
 systemctl enable prometheus
+systemctl start prometheus
