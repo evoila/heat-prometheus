@@ -8,7 +8,7 @@ curl -Lo /tmp/node_exporter.tar.gz "$DOWNLOAD_URL"
 tar -xvzf /tmp/node_exporter.tar.gz -C /tmp/
 
 FOLDER_NAME=$(find /tmp -type d -name "node_exporter*")
-cp $FOLDER_NAME/mysqld_exporter /bin/mysqld_exporter
+cp $FOLDER_NAME/node_exporter /bin/node_exporter
 
 cat <<EOF > /etc/systemd/system/node_exporter.service
 [Unit]
