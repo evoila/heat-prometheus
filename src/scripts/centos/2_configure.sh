@@ -14,4 +14,7 @@ done
 CONFIG=$(eval "echo -e \"$CONFIG_TEMPLATE\"")
 echo "$CONFIG" > /etc/prometheus/prometheus.yml
 
+chown root:root /etc/prometheus/prometheus.yml
+chmod 600 /etc/prometheus/prometheus.yml
+
 service prometheus restart
